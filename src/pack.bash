@@ -19,7 +19,7 @@
 CUR=$PWD
 HLD=$1
 BIN=$2
-PKG=$3
+PKG=${@: -1}
 TMP=`mktemp -d`
 
 mkdir $TMP/$HLD
@@ -28,6 +28,13 @@ cp $BIN $TMP/$HLD.so
 cp /shim/__init__.pyc $TMP/$HLD/__init__.pyc
 cp /shim/proxy.pyc $TMP/$HLD/proxy.pyc
 cp /shim/runtime.so $TMP/$HLD/runtime.so
+
+for (( i=3; i<=$#; i++ )); do
+  if [ "${!i}" != "$PKG" ]; then
+	echo "${!i}"
+	cp -r ${!i} $TMP/
+  fi
+done
 
 cd $TMP
 find . -exec touch -t 201302210800 {} +
